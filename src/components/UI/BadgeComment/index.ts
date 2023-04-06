@@ -1,0 +1,1 @@
+export { BadgeComment } from "./BadgeComment";
