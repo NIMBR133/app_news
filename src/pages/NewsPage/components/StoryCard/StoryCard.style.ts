@@ -19,6 +19,11 @@ const Card = styled(NavLink)`
 
 const Title = styled.h2`
   font-size: 24px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
 `;
 
 const Top = styled.div`
@@ -27,6 +32,10 @@ const Top = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 const Bottom = styled.div`

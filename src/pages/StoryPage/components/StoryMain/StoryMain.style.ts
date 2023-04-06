@@ -7,11 +7,20 @@ const Header = styled.header`
   align-items: center;
   gap: 20px;
   margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 const Title = styled.h1`
   font-size: 28px;
   font-weight: 600;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
 `;
 
 const LinkWrapper = styled.div`
