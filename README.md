@@ -1,1 +1,2 @@
-Запуск командой yarn dev
+Поставить пакеты yarn install
+Запуск yarn dev
