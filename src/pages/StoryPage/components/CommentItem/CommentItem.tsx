@@ -29,7 +29,7 @@ export const CommentItem: FC<Props> = ({ comment }) => {
   const onToggleNestedComments = () => {
     nestedComments
       ? setNestedComments(undefined)
-      : setNestedComments(getComments(comment.kids));
+      : setNestedComments(getComments({ commentsId: comment.kids }));
   };
 
   return (

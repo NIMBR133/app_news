@@ -1,10 +1,9 @@
 import { Container } from "@mui/material";
-import { FC, useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
+import { FC, useEffect } from "react";
 
-import { getNews } from "@/api/loaders/loader-news";
+import { getNews, PromiseNews } from "@/api/loaders/loader-news";
 import { SuspenseAwait } from "@/components/UI/SuspenseAwait";
-import { Story } from "@/interfaces";
+import { useStateLoader } from "@/hooks/use-state-loader";
 
 import { NewsList, NewsListError } from "./components/NewsList";
 import { Styles } from "./NewsPage.style";
@@ -14,8 +13,7 @@ const { Wrapper, Title, RefreshIconStyled } = Styles;
 let timerGetNews: NodeJS.Timer;
 
 export const NewsPage: FC = () => {
-  const { news: newsPromise } = useLoaderData() as { news: Promise<Story[]> };
-  const [newsListPromise, setNewsListPromise] = useState(newsPromise);
+  const [newsPromise, setNewsPromise] = useStateLoader<PromiseNews>();
 
   const setTimer = () => {
     timerGetNews = setInterval(onRefresh, 60000);
@@ -24,7 +22,7 @@ export const NewsPage: FC = () => {
   const clearTimer = () => clearInterval(timerGetNews);
 
   const onRefresh = () => {
-    setNewsListPromise(getNews());
+    setNewsPromise({ news: getNews() });
     clearTimer();
     setTimer();
   };
@@ -43,7 +41,7 @@ export const NewsPage: FC = () => {
         <Title>Last News</Title>
 
         <SuspenseAwait
-          resolve={newsListPromise}
+          resolve={newsPromise.news}
           errorElement={<NewsListError />}
           spinnerMt={280}
         >

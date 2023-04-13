@@ -38,3 +38,7 @@ export const getNews = async (): Promise<Story[]> => {
 export const loaderNews: LoaderFunction = async () => {
   return defer({ news: getNews() });
 };
+
+export interface PromiseNews {
+  news: ReturnType<typeof getNews>;
+}

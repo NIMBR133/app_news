@@ -36,7 +36,8 @@ const WrapperNewsListError = styled.div``;
 const TitleError = styled.h2`
   font-size: 24px;
   text-align: center;
-  margin-top: 100px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 export const Styles = {

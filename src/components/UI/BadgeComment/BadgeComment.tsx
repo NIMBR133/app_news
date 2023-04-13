@@ -3,7 +3,7 @@ import { Badge } from "@mui/material";
 import { FC } from "react";
 
 interface Props {
-  count?: number;
+  count?: number | null;
   onClick?: () => void;
 }
 

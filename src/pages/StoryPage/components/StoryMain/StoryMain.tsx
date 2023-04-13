@@ -3,23 +3,22 @@ import { FC } from "react";
 import { useAsyncValue, useNavigate } from "react-router";
 
 import { Time } from "@/components/UI/Time";
-import { StoryWithComments } from "@/interfaces";
+import { Story } from "@/interfaces";
 
-import { Comments } from "../Comments";
 import { Styles } from "./StoryMain.style";
 
-const { WrapperStory, Header, Title, LinkWrapper, LinkText } = Styles;
+const { Header, Title, LinkWrapper, LinkText } = Styles;
 
 export const StoryMain: FC = () => {
   const navigate = useNavigate();
-  const story = useAsyncValue() as StoryWithComments;
+  const story = useAsyncValue() as Story;
 
   const onBack = () => {
     navigate(-1);
   };
 
   return (
-    <WrapperStory>
+    <>
       <Header>
         <Title>{story.title}</Title>
         <Chip label={story.by} />
@@ -36,8 +35,6 @@ export const StoryMain: FC = () => {
           {story.url}
         </Link>
       </LinkWrapper>
-
-      <Comments comments={story.comments} />
-    </WrapperStory>
+    </>
   );
 };

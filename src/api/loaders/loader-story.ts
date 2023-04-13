@@ -3,13 +3,26 @@ import { defer, LoaderFunction } from "react-router";
 
 import { api } from "@/api";
 import { nonNullable } from "@/helpers/nonNullable";
-import { Comment, StoryWithComments } from "@/interfaces";
+import { sleep } from "@/helpers/sleep";
+import { Comment, Story } from "@/interfaces";
 
-export const getComments = async (commentsId?: number[]) => {
-  if (!commentsId || commentsId.length === 0) return;
+interface CommentProps {
+  story?: Promise<Story | null>;
+  commentsId?: number[];
+}
+
+export const getComments = async ({ commentsId, story }: CommentProps) => {
+  let ids: number[] | undefined = commentsId;
+  if (story) {
+    ids = (await story)?.kids;
+  }
+
+  await sleep(500);
+
+  if (!ids || ids.length === 0) return null;
 
   const promisesStoryComments = await Promise.allSettled(
-    commentsId.map(async (commentId) => {
+    ids.map(async (commentId) => {
       return (await api.getComments(String(commentId))).data;
     })
   );
@@ -34,10 +47,34 @@ export const getComments = async (commentsId?: number[]) => {
   return storyComments;
 };
 
-export const getStory = async (
-  storyId?: string
-): Promise<StoryWithComments | null> => {
+export const getAllComments = async (commentsId?: number[]) => {
+  let commentsCount = 0;
+
+  const getNestedComments = async (ids: number[]) => {
+    const comments = await getComments({ commentsId: ids });
+
+    if (!comments) return commentsCount;
+
+    commentsCount += comments.length;
+
+    const promises = comments.map(async (comment) => {
+      if (comment.kids) {
+        await getNestedComments(comment.kids);
+      }
+    });
+
+    await Promise.all(promises);
+  };
+
+  if (commentsId) await getNestedComments(commentsId);
+
+  return commentsCount;
+};
+
+export const getStory = async (storyId?: string): Promise<Story | null> => {
   if (!storyId) return null;
+
+  await sleep(2000);
 
   const story = (
     await api.getStory(storyId).catch((e: AxiosError) => {
@@ -50,10 +87,16 @@ export const getStory = async (
   return {
     ...story,
     time: story?.time ? new Date(Number(story.time) * 1000) : null,
-    comments: await getComments(story.kids),
   };
 };
 
 export const loaderStory: LoaderFunction = async ({ params: { id } }) => {
-  return defer({ story: getStory(id) });
+  const story = getStory(id);
+
+  return defer({ story, comments: getComments({ story }) });
 };
+
+export interface PromiseStory {
+  story: ReturnType<typeof getStory>;
+  comments: ReturnType<typeof getComments>;
+}
